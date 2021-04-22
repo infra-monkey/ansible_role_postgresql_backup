@@ -2,7 +2,7 @@
 Description=Run daily backup of Postgresql Server
 
 [Timer]
-OnCalendar={{ item.periodicity }}
+{{ item.periodicity | default('{{ default_periodicity }}') }}
 AccuracySec=2h
 Persistent=true
 

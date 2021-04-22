@@ -8,10 +8,11 @@ postgresql_backup_spec:
     database_name: "database"
     database_user: "dbuser"
     database_password: "dbpassword"
-    periodicity: "OnCalendar=*-*-* 23:00:00"
+    periodicity: "OnCalendar=*-*-* 22:00:00"
     backup_retention: "90"
 backup_mount_type: "local"
 backup_dir: "/tmp/postgresql_backup"
 remote_mount_path: "nfsserver:/path/to/mount"
 default_backup_retention: "30"
+default_periodicity: "OnCalendar=*-*-* 22:00:00"
 ...

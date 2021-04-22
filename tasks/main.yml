@@ -3,18 +3,18 @@
   include_vars: "vars-{{ ansible_os_family }}.yml"
 - block:
     - name: Configure apt postgresql repository key
-      apt_key:
+      ansible.builtin.apt_key:
         url: "{{ postgresql_apt_key_url }}"
         state: present
 
     - name: Configure apt postgresql repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "{{ postgresql_apt_repo }}"
         state: present
         filename: "postgresql"
 
     - name: "Install required packages"
-      apt:
+      ansible.builtin.apt:
         name: "{{ pkglist }}"
         update_cache: true
         autoremove: true
@@ -23,7 +23,7 @@
 
 - block:
     - name: "Enable Postgresql yum repository"
-      yum_repository:
+      ansible.builtin.yum_repository:
         name: postgresql
         description: "Postgresql repository"
         file: "postgresql"
@@ -32,7 +32,7 @@
         gpgkey: "{{ postgresql_yum_key_url }}"
 
     - name: "Install required packages"
-      package:
+      ansible.builtin.package:
         name: "{{ pkglist }}"
         state: present
   when: ansible_os_family == "RedHat"
@@ -46,7 +46,7 @@
     mode: '0755'
 
 - name: "Ensure nfs dependencies are installed"
-  package:
+  ansible.builtin.package:
     name: "{{ nfs_deps }}"
     state: present
   when: backup_mount_type == "nfs"
