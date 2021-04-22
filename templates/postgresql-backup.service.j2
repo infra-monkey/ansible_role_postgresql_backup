@@ -1,0 +1,6 @@
+[Unit]
+Description=Backup Postgresql Database {{ item.database_name }}
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/postgresql-backup.sh /etc/postgresql-backup/{{ item.database_name }}.conf

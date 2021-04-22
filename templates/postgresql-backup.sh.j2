@@ -1,0 +1,99 @@
+#!/bin/bash
+#
+# Backup script for Postgresql server.
+# 
+# Nighlty backup , full backup
+# Executed as root
+# Keeps $NB_BACKUPS in archive.
+# Stores the backups on nfs share, in a hostname/date subdir
+#
+
+function load_variables () {
+source ${1}
+BACKUP_DIR={{ backup_dir }}
+DATE=$(date +%F)
+BACKUP_BASEDIR="$(hostname -f)/postgresql/${DB_NAME}"
+BACKUP_LOCALDIR=/tmp/backup
+BACKUP_TARGETDIR=${BACKUP_DIR}/${BACKUP_BASEDIR}/${DATE}
+
+#ROCKETCHAT_TOKEN="bTexfGyypLYHyMT6v/nQsWp7vBhpW7T9TDMTebvTCPtcisMSixpcvkK2t7ptxrHqCh"
+#ROCKETCHAT_SCRIPT="/usr/local/bin/rocketchat-notify.sh"
+}
+
+function show_variables () {
+echo "DATABASE=${DATABASE}"
+echo "NB_BACKUPS=${NB_BACKUPS}"
+echo "BACKUP_DIR=${BACKUP_DIR}"
+echo "DATE=${DATE}"
+echo "BACKUP_BASEDIR=${BACKUP_BASEDIR}"
+echo "BACKUP_LOCALDIR=${BACKUP_LOCALDIR}"
+echo "BACKUP_TARGETDIR=${BACKUP_TARGETDIR}"
+}
+
+function exit_script () {
+    ERR_CODE=${1}
+    case ${ERR_CODE} in
+        1)
+            EXIT_MSG="This script must be run as root"
+            ;;
+        2)
+            EXIT_MSG="Error during backup operation."
+            ;;
+        3)
+            EXIT_MSG="Error while copying backup files."
+            ;;
+        *)
+            EXIT_MSG="Unkonwn error."
+            ;;
+    esac
+    unmount_backup_share
+    echo ${EXIT_MSG}
+    #${ROCKETCHAT_SCRIPT} ${ROCKETCHAT_TOKEN} "FAILED" "${0} Failed with error ${EXIT_CODE}\n${EXIT_MSG}"
+    exit ${ERR_CODE}
+}
+
+function remove_oldest_backup () {
+    DIR_NAME=$(ls -t1 ${BACKUP_MOUNTPOINT}/${BACKUP_BASEDIR} | tail -1)
+    rm -rf ${BACKUP_MOUNTPOINT}/${BACKUP_BASEDIR}/${DIR_NAME}
+    return 0
+}
+
+function create_backup_dir () {
+    mkdir -p ${BACKUP_TARGETDIR}
+    return 0
+}
+
+function copy_backup () {
+    ERR_CODE=4
+    create_backup_dir
+    NB_ARCHIVES=$(ls -l ${BACKUP_MOUNTPOINT}/${BACKUP_BASEDIR} | wc -l)
+#     mkdir -p ${BACKUP_TARGETDIR} || return ${ERR_CODE}
+    cp -rf ${BACKUP_LOCALDIR}/* ${BACKUP_TARGETDIR} || return ${ERR_CODE}
+    rm -rf ${BACKUP_LOCALDIR}/*
+    [ ${NB_ARCHIVES} -gt ${NB_BACKUPS} ] && remove_oldest_backup
+    return 0
+    
+}
+
+function perform_backup () {
+    ERR_CODE=3
+    mkdir -p ${BACKUP_LOCALDIR}
+    echo "rm -rf ${BACKUP_LOCALDIR}/*"
+    rm -rf ${BACKUP_LOCALDIR}/*
+    sudo -u postgres /usr/bin/pg_dumpall > ${BACKUP_LOCALDIR}/pg_dumpall.sql
+    cp -r /etc/postgresql ${BACKUP_LOCALDIR}
+    return 0
+}
+
+#
+# MAIN PART
+#
+
+[ ${UID} -ne 0 ] && exit_script 1
+CONF_FILE=${1}
+load_variables ${CONF_FILE}
+show_variables
+perform_backup || exit_script $?
+copy_backup ||  exit_script $?
+
+#${ROCKETCHAT_SCRIPT} ${ROCKETCHAT_TOKEN} "SUCCESSFUL" "${0} performed successfully"
