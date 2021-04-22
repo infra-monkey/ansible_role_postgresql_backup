@@ -1,0 +1,17 @@
+---
+postgresql_version: "13"
+postgresql_default_host: "127.0.0.1"
+postgresql_default_port: "5432"
+postgresql_backup_spec:
+  - host: "127.0.0.1"
+    port: "5432"
+    database_name: "database"
+    database_user: "dbuser"
+    database_password: "dbpassword"
+    periodicity: "OnCalendar=*-*-* 23:00:00"
+    backup_retention: "90"
+backup_mount_type: "local"
+backup_dir: "/tmp/postgresql_backup"
+remote_mount_path: "nfsserver:/path/to/mount"
+default_backup_retention: "30"
+...

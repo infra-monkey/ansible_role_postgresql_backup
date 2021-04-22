@@ -1,0 +1,6 @@
+POSTGRESQL_HOST={{ item.host | default("{{ postgresql_default_host }}") }}
+POSTGRESQL_HOST={{ item.port | default("{{ postgresql_default_port }}") }}
+DB_NAME={{ item.database_name }}
+DB_USERNAME={{ item.database_user }}
+DB_PASSWORD={{ item.database_password }}
+NB_BACKUPS={{ item.backup_retention | default("{{ default_backup_retention }}") }}

@@ -1,2 +1,118 @@
 ---
+- name: "Include os specific variables"
+  include_vars: "vars-{{ ansible_os_family }}.yml"
+- block:
+    - name: Configure apt postgresql repository key
+      apt_key:
+        url: "{{ postgresql_apt_key_url }}"
+        state: present
+
+    - name: Configure apt postgresql repository
+      apt_repository:
+        repo: "{{ postgresql_apt_repo }}"
+        state: present
+        filename: "postgresql"
+
+    - name: "Install required packages"
+      apt:
+        name: "{{ pkglist }}"
+        update_cache: true
+        autoremove: true
+        state: present
+  when: ansible_os_family == "Debian"
+
+- block:
+    - name: "Enable Postgresql yum repository"
+      yum_repository:
+        name: postgresql
+        description: "Postgresql repository"
+        file: "postgresql"
+        baseurl: "{{ postgresql_yum_repo_url }}"
+        gpgcheck: true
+        gpgkey: "{{ postgresql_yum_key_url }}"
+
+    - name: "Install required packages"
+      package:
+        name: "{{ pkglist }}"
+        state: present
+  when: ansible_os_family == "RedHat"
+
+- name: "Ensure the target directory exists (can be used as mount point)"
+  ansible.builtin.file:
+    path: "{{ backup_targetdir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: "Ensure nfs dependencies are installed"
+  package:
+    name: "{{ nfs_deps }}"
+    state: present
+  when: backup_mount_type == "nfs"
+
+- name: "Ensure the backup mount is defined"
+  ansible.posix.mount:
+    src: "{{ remote_mount_path }}"
+    path: "{{ backup_dir }}"
+    opts: rw,noatime
+    state: mounted
+    fstype: "{{ backup_mount_type}}"
+    boot: true
+  when: backup_mount_type == "nfs"
+
+- name: "Copy the backup script"
+  ansible.builtin.template:
+    src: postgresql-backup.sh.j2
+    dest: /usr/local/bin/postgresql-backup.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: "Ensure the cinfiguration directory exists"
+  ansible.builtin.file:
+    path: "/etc/postgresql-backup"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: "Define backup settings"
+  ansible.builtin.template:
+    src: postgresql-backup.conf.j2
+    dest: "/etc/postgresql-backup/{{ item.database_name }}.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - postgresql_backup_spec
+
+- name: "Create systemd service for the backup"
+  ansible.builtin.template:
+    src: postgresql-backup.service.j2
+    dest: "/etc/systemd/system/postgresql-backup-{{ item.database_name }}.service"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - postgresql_backup_spec
+
+- name: "Create systemd timer for the backup"
+  ansible.builtin.template:
+    src: postgresql-backup.timer.j2
+    dest: "/etc/systemd/system/postgresql-backup-{{ item.database_name }}.timer"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - postgresql_backup_spec
+
+- name: "Ensure systemd timers are enabled"
+  ansible.builtin.systemd:
+    name: postgresql-backup-{{ item.database_name }}.timer
+    state: started
+    enabled: true
+    daemon_reload: true
+  loop:
+    - postgresql_backup_spec
 ...
