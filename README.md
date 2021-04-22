@@ -3,7 +3,7 @@ This role does configures daily backups of postgresql databases.
 This role requires root permissions. It must be called as root. This needs to be managed at the ansible or playbook level.
 
 # Security
-Git repositories and inventories must *__never__* expose contain sensitive information such as credentials.
+Git repositories and inventories must ***never*** expose contain sensitive information such as credentials.
 Make sure your sensitive variables are protected using a vault or similiar technology.
 
 # Variables
@@ -26,6 +26,18 @@ Make sure your sensitive variables are protected using a vault or similiar techn
 | postgresql_backup_spec.database_password | string | yes | n.a. | The password to use. |
 | postgresql_backup_spec.periodicity | string | no | `default_periodicity` | Overrides the default periodicity value for this database. |
 | postgresql_backup_spec.backup_retention | string | no | `default_backup_retention` | Overrides the default retention value for this database. |
+
+# Example of inventory variables
+
+    backup_mount_type: "nfs"
+    backup_dir: "/mnt/postgresql_backup"
+    remote_mount_path: "192.168.25.2:/exports/backups"
+    postgresql_backup_spec:
+      - database_name: "pgsql_website_db"
+        database_user: "db_bckp_user"
+        database_password: "superpassword"
+        periodicity: "OnCalendar=*-*-* 1:00:00"
+
 
 # Reqirements
 
