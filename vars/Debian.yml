@@ -5,6 +5,6 @@ pkglist:
   - postgresql-client-{{ postgresql_version }}
 nfs_deps:
   - nfs-common
-depist:
+deplist:
   - gpg
 ...
