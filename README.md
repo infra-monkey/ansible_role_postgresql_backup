@@ -2,6 +2,8 @@
 This role does configures daily backups of postgresql databases.
 This role requires root permissions. It must be called as root. This needs to be managed at the ansible or playbook level.
 
+>This role is not intended for large Postgresql Clusters and Infrastructure. For such cases, please look at specialized solutions like barman.
+
 # Security
 Git repositories and inventories must ***never*** expose contain sensitive information such as credentials.
 Make sure your sensitive variables are protected using a vault or similiar technology.
