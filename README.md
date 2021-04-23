@@ -4,6 +4,10 @@ This role requires root permissions. It must be called as root. This needs to be
 
 >This role is not intended for large Postgresql Clusters and Infrastructure. For such cases, please look at specialized solutions like barman.
 
+>Backups are stored in {{ backup_dir }}/{{ ansible_fqdn }}/postgresql/{{ postgresql_backup_spec.database_name }}/<date>
+
+>This role does not manage pg_hba.conf. Thus make sure the host is authorized to connect to the database.
+
 # Security
 Git repositories and inventories must ***never*** expose contain sensitive information such as credentials.
 Make sure your sensitive variables are protected using a vault or similiar technology.

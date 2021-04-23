@@ -3,7 +3,6 @@ Description=Run daily backup of Postgresql Server
 
 [Timer]
 {{ item.periodicity | default('{{ default_periodicity }}') }}
-AccuracySec=2h
 Persistent=true
 
 [Install]
