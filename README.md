@@ -15,6 +15,7 @@ Make sure your sensitive variables are protected using a vault or similiar techn
 | postgresql_version | string | no | `13` | The version of postgresql client to use. |
 | postgresql_default_host | string | no | `127.0.0.1` | The default hostname or ip to backup from. |
 | postgresql_default_port | string | no | `5432` | The default port of the postgresql server. |
+| postgresql_backup_uid | integer | no | n.a. | The uid of the backup user to create. |
 | default_backup_retention | string | no | `30` | The default number of backups to keep. |
 | default_periodicity | string | no | `OnCalendar=*-*-* 22:00:00` | The default periodicity of backups (every night at 10pm). Systemd timer format. |
 | backup_mount_type | string | no | `local` | Type of storage that will hold the backup files. Supported types: local, nfs |
@@ -35,7 +36,8 @@ Make sure your sensitive variables are protected using a vault or similiar techn
     backup_dir: "/mnt/postgresql_backup"
     remote_mount_path: "192.168.25.2:/exports/backups"
     postgresql_backup_spec:
-      - database_name: "pgsql_website_db"
+      - host: "192.168.25.3"
+        database_name: "pgsql_website_db"
         database_user: "db_bckp_user"
         database_password: "superpassword"
         periodicity: "OnCalendar=*-*-* 1:00:00"
@@ -48,6 +50,8 @@ This role uses the collection based ansible modules which requires:
 This role depends on the ansible collections:
 - ansible.builtin
 - ansible.posix
+
+The role configures **systemd timers**, if your host doesn't use systemd, it will fail.
 
 # Automatique Testing
 

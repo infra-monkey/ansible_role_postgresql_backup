@@ -8,6 +8,21 @@
     state: present
   when: deplist is defined
 
+- name: "Ensure pgbackup group exists"
+  group:
+    name: pgbackup
+    state: present
+
+- name: "Ensure pgbackup user exists"
+  user:
+    name: "pgbackup"
+    comment: "Postgresql Backup User"
+    group: "pgbackup"
+    uid: "{{ postgresql_backup_uid | default(omit) }}"
+    shell: '/bin/bash'
+    createhome: true
+    state: present
+
 - block:
     - name: Configure apt postgresql repository key
       ansible.builtin.apt_key:
@@ -76,6 +91,14 @@
     boot: true
   when: backup_mount_type == "nfs"
 
+- name: "Ensure the target directory for host exists and is writable"
+  ansible.builtin.file:
+    path: "{{ backup_dir }}/{{ ansible_fqdn }}"
+    state: directory
+    owner: pgbackup
+    group: pgbackup
+    mode: '0755'
+
 - name: "Copy the backup script"
   ansible.builtin.template:
     src: postgresql-backup.sh.j2
@@ -88,16 +111,26 @@
   ansible.builtin.file:
     path: "/etc/postgresql-backup"
     state: directory
-    owner: root
-    group: root
+    owner: pgbackup
+    group: pgbackup
     mode: '0755'
+
+- name: "Ensure connection settings are defined"
+  ansible.builtin.lineinfile:
+    path: /home/pgbackup/.pgpass
+    line: "{{ item.host | default(postgresql_default_host) }}:{{ item.port | default(postgresql_default_port) }}:{{ item.database_name }}:{{ item.database_user }}:{{ item.database_password }}"
+    create: true
+    owner: pgbackup
+    group: pgbackup
+    mode: '0600'
+  loop: "{{ postgresql_backup_spec }}"
 
 - name: "Define backup settings"
   ansible.builtin.template:
     src: postgresql-backup.conf.j2
     dest: "/etc/postgresql-backup/{{ item.database_name }}.conf"
-    owner: root
-    group: root
+    owner: pgbackup
+    group: pgbackup
     mode: '0644'
   loop: "{{ postgresql_backup_spec }}"
 
