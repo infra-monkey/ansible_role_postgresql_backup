@@ -16,12 +16,11 @@ BACKUP_BASEDIR="$(hostname -f)/postgresql/${DB_NAME}"
 BACKUP_LOCALDIR=/tmp/backup
 BACKUP_TARGETDIR=${BACKUP_DIR}/${BACKUP_BASEDIR}/${DATE}
 
-#ROCKETCHAT_TOKEN="bTexfGyypLYHyMT6v/nQsWp7vBhpW7T9TDMTebvTCPtcisMSixpcvkK2t7ptxrHqCh"
-#ROCKETCHAT_SCRIPT="/usr/local/bin/rocketchat-notify.sh"
 }
 
 function show_variables () {
-echo "DATABASE=${DATABASE}"
+echo "DB_NAME=${DB_NAME}"
+echo "POSTGRESQL_HOST=${POSTGRESQL_HOST}"
 echo "NB_BACKUPS=${NB_BACKUPS}"
 echo "BACKUP_DIR=${BACKUP_DIR}"
 echo "DATE=${DATE}"
@@ -46,15 +45,14 @@ function exit_script () {
             EXIT_MSG="Unkonwn error."
             ;;
     esac
-    unmount_backup_share
     echo ${EXIT_MSG}
     #${ROCKETCHAT_SCRIPT} ${ROCKETCHAT_TOKEN} "FAILED" "${0} Failed with error ${EXIT_CODE}\n${EXIT_MSG}"
     exit ${ERR_CODE}
 }
 
 function remove_oldest_backup () {
-    DIR_NAME=$(ls -t1 ${BACKUP_MOUNTPOINT}/${BACKUP_BASEDIR} | tail -1)
-    rm -rf ${BACKUP_MOUNTPOINT}/${BACKUP_BASEDIR}/${DIR_NAME}
+    DIR_NAME=$(ls -t1 ${BACKUP_DIR}/${BACKUP_BASEDIR} | tail -1)
+    rm -rf ${BACKUP_DIR}/${BACKUP_BASEDIR}/${DIR_NAME}
     return 0
 }
 
@@ -66,7 +64,7 @@ function create_backup_dir () {
 function copy_backup () {
     ERR_CODE=4
     create_backup_dir
-    NB_ARCHIVES=$(ls -l ${BACKUP_MOUNTPOINT}/${BACKUP_BASEDIR} | wc -l)
+    NB_ARCHIVES=$(ls -l ${BACKUP_DIR}/${BACKUP_BASEDIR} | wc -l)
 #     mkdir -p ${BACKUP_TARGETDIR} || return ${ERR_CODE}
     cp -rf ${BACKUP_LOCALDIR}/* ${BACKUP_TARGETDIR} || return ${ERR_CODE}
     rm -rf ${BACKUP_LOCALDIR}/*
@@ -80,8 +78,8 @@ function perform_backup () {
     mkdir -p ${BACKUP_LOCALDIR}
     echo "rm -rf ${BACKUP_LOCALDIR}/*"
     rm -rf ${BACKUP_LOCALDIR}/*
-    sudo -u postgres /usr/bin/pg_dumpall > ${BACKUP_LOCALDIR}/pg_dumpall.sql
-    cp -r /etc/postgresql ${BACKUP_LOCALDIR}
+    /usr/bin/pg_dump --host=${POSTGRESQL_HOST} --port=${POSTGRESQL_PORT} --username=${DB_USERNAME} -w ${DB_NAME} > ${BACKUP_LOCALDIR}/pg_dump_${DB_NAME}.sql
+
     return 0
 }
 
@@ -89,11 +87,8 @@ function perform_backup () {
 # MAIN PART
 #
 
-[ ${UID} -ne 0 ] && exit_script 1
 CONF_FILE=${1}
 load_variables ${CONF_FILE}
 show_variables
 perform_backup || exit_script $?
 copy_backup ||  exit_script $?
-
-#${ROCKETCHAT_SCRIPT} ${ROCKETCHAT_TOKEN} "SUCCESSFUL" "${0} performed successfully"
