@@ -84,7 +84,7 @@
     group: root
     mode: '0755'
 
-- name: "Ensure the cinfiguration directory exists"
+- name: "Ensure the configuration directory exists"
   ansible.builtin.file:
     path: "/etc/postgresql-backup"
     state: directory
@@ -99,8 +99,7 @@
     owner: root
     group: root
     mode: '0644'
-  loop:
-    - postgresql_backup_spec
+  loop: "{{ postgresql_backup_spec }}"
 
 - name: "Create systemd service for the backup"
   ansible.builtin.template:
@@ -109,8 +108,7 @@
     owner: root
     group: root
     mode: '0644'
-  loop:
-    - postgresql_backup_spec
+  loop: "{{ postgresql_backup_spec }}"
 
 - name: "Create systemd timer for the backup"
   ansible.builtin.template:
@@ -119,8 +117,7 @@
     owner: root
     group: root
     mode: '0644'
-  loop:
-    - postgresql_backup_spec
+  loop: "{{ postgresql_backup_spec }}"
 
 - name: "Ensure systemd timers are enabled"
   ansible.builtin.systemd:
@@ -128,6 +125,5 @@
     state: started
     enabled: true
     daemon_reload: true
-  loop:
-    - postgresql_backup_spec
+  loop: "{{ postgresql_backup_spec }}"
 ...
