@@ -54,7 +54,7 @@
 
 - name: "Ensure the target directory exists (can be used as mount point)"
   ansible.builtin.file:
-    path: "{{ backup_targetdir }}"
+    path: "{{ backup_dir }}"
     state: directory
     owner: root
     group: root
