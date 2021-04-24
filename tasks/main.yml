@@ -118,12 +118,13 @@
 - name: "Ensure connection settings are defined"
   ansible.builtin.lineinfile:
     path: /home/pgbackup/.pgpass
-    line: "{{ item.host | default(postgresql_default_host) }}:{{ item.port | default(postgresql_default_port) }}:{{ item.database_name }}:{{ item.database_user }}:{{ item.database_password }}"
+    line: "{{ item.postgresql_host | default(postgresql_default_host) }}:{{ item.postgresql_port | default(postgresql_default_port) }}:{{ item.database_name }}:{{ item.database_user }}:{{ item.database_password }}"
     create: true
     owner: pgbackup
     group: pgbackup
     mode: '0600'
   loop: "{{ postgresql_backup_spec }}"
+  when: postgresql_backup_spec is defined
 
 - name: "Define backup settings"
   ansible.builtin.template:
@@ -133,6 +134,7 @@
     group: pgbackup
     mode: '0644'
   loop: "{{ postgresql_backup_spec }}"
+  when: postgresql_backup_spec is defined
 
 - name: "Create systemd service for the backup"
   ansible.builtin.template:
@@ -142,6 +144,7 @@
     group: root
     mode: '0644'
   loop: "{{ postgresql_backup_spec }}"
+  when: postgresql_backup_spec is defined
 
 - name: "Create systemd timer for the backup"
   ansible.builtin.template:
@@ -151,6 +154,7 @@
     group: root
     mode: '0644'
   loop: "{{ postgresql_backup_spec }}"
+  when: postgresql_backup_spec is defined
 
 - name: "Ensure systemd timers are enabled"
   ansible.builtin.systemd:
@@ -159,4 +163,5 @@
     enabled: true
     daemon_reload: true
   loop: "{{ postgresql_backup_spec }}"
+  when: postgresql_backup_spec is defined
 ...

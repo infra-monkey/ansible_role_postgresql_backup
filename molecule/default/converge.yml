@@ -3,5 +3,10 @@
   hosts: all
   connection: local
   become: true
+  vars:
+    postgresql_backup_spec:
+      - database_name: "database"
+        database_user: "dbuser"
+        database_password: "dbpassword"
   roles:
     - role: "infra_monkey.postgresql_backup"

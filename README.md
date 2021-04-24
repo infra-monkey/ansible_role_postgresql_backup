@@ -26,8 +26,8 @@ Make sure your sensitive variables are protected using a vault or similiar techn
 | backup_dir | string | no | `/tmp/postgresql_backup` | Path where the backups are sent. Is the mount point in case of network storage. |
 | remote_mount_path | string | no | `nfsserver:/path/to/mount` | The remote path of the mount command. Depends on the protocol. |
 | postgresql_backup_spec | list | yes | n.a. | The list of databases to backup. |
-| postgresql_backup_spec.host | string | no | `postgresql_default_host` | Overrides the postgresql sever host value for this database. |
-| postgresql_backup_spec.port | string | no | `postgresql_default_port` | Overrides the postgresql sever port value for this database. |
+| postgresql_backup_spec.postgresql_host | string | no | `postgresql_default_host` | Overrides the postgresql sever host value for this database. |
+| postgresql_backup_spec.postgresql_port | string | no | `postgresql_default_port` | Overrides the postgresql sever port value for this database. |
 | postgresql_backup_spec.database_name | string | yes | n.a. | The name of the database to backup. |
 | postgresql_backup_spec.database_user | string | yes | n.a. | The username to use. |
 | postgresql_backup_spec.database_password | string | yes | n.a. | The password to use. |
@@ -40,7 +40,7 @@ Make sure your sensitive variables are protected using a vault or similiar techn
     backup_dir: "/mnt/postgresql_backup"
     remote_mount_path: "192.168.25.2:/exports/backups"
     postgresql_backup_spec:
-      - host: "192.168.25.3"
+      - postgresql_host: "192.168.25.3"
         database_name: "pgsql_website_db"
         database_user: "db_bckp_user"
         database_password: "superpassword"
