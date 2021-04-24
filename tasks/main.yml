@@ -118,7 +118,7 @@
 - name: "Ensure connection settings are defined"
   ansible.builtin.lineinfile:
     path: /home/pgbackup/.pgpass
-    line: "{{ item.host | default(postgresql_default_host) }}:{{ item.port | default(postgresql_default_port) }}:{{ item.database_name }}:{{ item.database_user }}:{{ item.database_password }}"
+    line: "{{ item.postgresql_host | default(postgresql_default_host) }}:{{ item.postgresql_port | default(postgresql_default_port) }}:{{ item.database_name }}:{{ item.database_user }}:{{ item.database_password }}"
     create: true
     owner: pgbackup
     group: pgbackup
