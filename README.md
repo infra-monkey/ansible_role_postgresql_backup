@@ -12,6 +12,8 @@ This role requires root permissions. It must be called as root. This needs to be
 Git repositories and inventories must ***never*** expose contain sensitive information such as credentials.
 Make sure your sensitive variables are protected using a vault or similiar technology.
 
+Tasks using passwords are not logged.
+
 # Variables
 
 | Name  | Type | Required | Default Value | Description |

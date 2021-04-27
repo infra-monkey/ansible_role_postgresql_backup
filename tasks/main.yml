@@ -123,6 +123,7 @@
     owner: pgbackup
     group: pgbackup
     mode: '0600'
+  no_log: true
   loop: "{{ postgresql_backup_spec }}"
   when: postgresql_backup_spec is defined
 
@@ -133,6 +134,7 @@
     owner: pgbackup
     group: pgbackup
     mode: '0644'
+  no_log: true
   loop: "{{ postgresql_backup_spec }}"
   when: postgresql_backup_spec is defined
 
@@ -143,6 +145,7 @@
     owner: root
     group: root
     mode: '0644'
+  no_log: true
   loop: "{{ postgresql_backup_spec }}"
   when: postgresql_backup_spec is defined
 
@@ -153,6 +156,7 @@
     owner: root
     group: root
     mode: '0644'
+  no_log: true
   loop: "{{ postgresql_backup_spec }}"
   when: postgresql_backup_spec is defined
 
@@ -162,6 +166,7 @@
     state: started
     enabled: true
     daemon_reload: true
+  no_log: true
   loop: "{{ postgresql_backup_spec }}"
   when: postgresql_backup_spec is defined
 ...
