@@ -8,6 +8,8 @@ This role requires root permissions. It must be called as root. This needs to be
 
 >This role does not manage pg_hba.conf. Thus make sure the host is authorized to connect to the database.
 
+>Use `pg_restore` to restore those backups. Make sure to set the appropriate options.
+
 # Security
 Git repositories and inventories must ***never*** expose contain sensitive information such as credentials.
 Make sure your sensitive variables are protected using a vault or similiar technology.
