@@ -4,3 +4,4 @@ POSTGRESQL_PORT={{ item.postgresql_port | default(postgresql_default_port) }}
 DB_NAME={{ item.database_name }}
 DB_USERNAME={{ item.database_user }}
 NB_BACKUPS={{ item.backup_retention | default(default_backup_retention) }}
+OPTIONS={{ postgresql_backup_spec.postgresql_options | default(postgresql_default_options) }}
