@@ -21,6 +21,7 @@ Tasks using passwords are not logged.
 | postgresql_version | string | no | `13` | The version of postgresql client to use. |
 | postgresql_default_host | string | no | `127.0.0.1` | The default hostname or ip to backup from. |
 | postgresql_default_port | string | no | `5432` | The default port of the postgresql server. |
+| postgresql_default_options | string | no | `""` | The default options to pass to `pg_dump`(ex: "-Fc" for compression) |
 | postgresql_backup_uid | integer | no | n.a. | The uid of the backup user to create. |
 | default_backup_retention | string | no | `30` | The default number of backups to keep. |
 | default_periodicity | string | no | `OnCalendar=*-*-* 22:00:00` | The default periodicity of backups (every night at 10pm). Systemd timer format. |
@@ -30,6 +31,7 @@ Tasks using passwords are not logged.
 | postgresql_backup_spec | list | yes | n.a. | The list of databases to backup. |
 | postgresql_backup_spec.postgresql_host | string | no | `postgresql_default_host` | Overrides the postgresql sever host value for this database. |
 | postgresql_backup_spec.postgresql_port | string | no | `postgresql_default_port` | Overrides the postgresql sever port value for this database. |
+| postgresql_backup_spec.postgresql_options | string | no | `postgresql_default_options` | Overrides the postgresql sever options value for this database. |
 | postgresql_backup_spec.database_name | string | yes | n.a. | The name of the database to backup. |
 | postgresql_backup_spec.database_user | string | yes | n.a. | The username to use. |
 | postgresql_backup_spec.database_password | string | yes | n.a. | The password to use. |

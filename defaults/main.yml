@@ -2,6 +2,7 @@
 postgresql_version: "13"
 postgresql_default_host: "127.0.0.1"
 postgresql_default_port: "5432"
+postgresql_default_options: ""
 backup_mount_type: "local"
 backup_dir: "/tmp/postgresql_backup"
 remote_mount_path: "nfsserver:/path/to/mount"
