@@ -69,7 +69,7 @@
 
 - name: "Ensure the target directory exists (can be used as mount point)"
   ansible.builtin.file:
-    path: "{{ backup_dir }}"
+    path: "{{ postgresql_backup_dir }}"
     state: directory
     owner: root
     group: root
@@ -79,21 +79,21 @@
   ansible.builtin.package:
     name: "{{ nfs_deps }}"
     state: present
-  when: backup_mount_type == "nfs"
+  when: postgresql_backup_remote_mount_path == "nfs"
 
 - name: "Ensure the backup mount is defined"
   ansible.posix.mount:
-    src: "{{ remote_mount_path }}"
-    path: "{{ backup_dir }}"
+    src: "{{ postgresql_backup_remote_mount_path }}"
+    path: "{{ postgresql_backup_dir }}"
     opts: rw,noatime
     state: mounted
     fstype: "{{ backup_mount_type }}"
     boot: true
-  when: backup_mount_type == "nfs"
+  when: postgresql_backup_remote_mount_path == "nfs"
 
 - name: "Ensure the target directory for host exists and is writable"
   ansible.builtin.file:
-    path: "{{ backup_dir }}/{{ ansible_fqdn }}"
+    path: "{{ postgresql_backup_dir }}/{{ ansible_fqdn }}"
     state: directory
     owner: pgbackup
     group: pgbackup
@@ -118,7 +118,7 @@
 - name: "Ensure connection settings are defined"
   ansible.builtin.lineinfile:
     path: /home/pgbackup/.pgpass
-    line: "{{ item.postgresql_host | default(postgresql_default_host) }}:{{ item.postgresql_port | default(postgresql_default_port) }}:{{ item.database_name }}:{{ item.database_user }}:{{ item.database_password }}"
+    line: "{{ item.postgresql_host | default(postgresql_backup_default_host) }}:{{ item.postgresql_port | default(postgresql_backup_default_port) }}:{{ item.database_name }}:{{ item.database_user }}:{{ item.database_password }}"
     create: true
     owner: pgbackup
     group: pgbackup
