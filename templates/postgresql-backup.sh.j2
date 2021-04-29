@@ -10,7 +10,7 @@
 
 function load_variables () {
 source ${1}
-BACKUP_DIR={{ backup_dir }}
+BACKUP_DIR={{ postgresql_backup_dir }}
 DATE=$(date +%F)
 BACKUP_BASEDIR="$(hostname -f)/postgresql/${DB_NAME}"
 BACKUP_LOCALDIR=/tmp/backup

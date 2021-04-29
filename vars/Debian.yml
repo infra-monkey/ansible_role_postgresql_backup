@@ -2,7 +2,7 @@
 postgresql_apt_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
 postgresql_apt_repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
 pkglist:
-  - postgresql-client-{{ postgresql_version }}
+  - postgresql-client-{{ postgresql_backup_version }}
 nfs_deps:
   - nfs-common
 deplist:

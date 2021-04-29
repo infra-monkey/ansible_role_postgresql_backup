@@ -20,25 +20,25 @@ Tasks using passwords are not logged.
 
 | Name  | Type | Required | Default Value | Description |
 | ----- | ---- | -------- | ------------- | ----------- |
-| postgresql_version | string | no | `13` | The version of postgresql client to use. |
-| postgresql_default_host | string | no | `127.0.0.1` | The default hostname or ip to backup from. |
-| postgresql_default_port | string | no | `5432` | The default port of the postgresql server. |
-| postgresql_default_options | string | no | `""` | The default options to pass to `pg_dump`(ex: "-Fc" for compression) |
+| postgresql_backup_version | string | no | `13` | The version of postgresql client to use. |
+| postgresql_backup_default_host | string | no | `127.0.0.1` | The default hostname or ip to backup from. |
+| postgresql_backup_default_port | string | no | `5432` | The default port of the postgresql server. |
+| postgresql_backup_default_options | string | no | `""` | The default options to pass to `pg_dump`(ex: "-Fc" for compression) |
 | postgresql_backup_uid | integer | no | n.a. | The uid of the backup user to create. |
-| default_backup_retention | string | no | `30` | The default number of backups to keep. |
-| default_periodicity | string | no | `OnCalendar=*-*-* 22:00:00` | The default periodicity of backups (every night at 10pm). Systemd timer format. |
-| backup_mount_type | string | no | `local` | Type of storage that will hold the backup files. Supported types: local, nfs |
-| backup_dir | string | no | `/tmp/postgresql_backup` | Path where the backups are sent. Is the mount point in case of network storage. |
-| remote_mount_path | string | no | `nfsserver:/path/to/mount` | The remote path of the mount command. Depends on the protocol. |
+| postgresql_backup_default_retention | string | no | `30` | The default number of backups to keep. |
+| postgresql_backup_default_periodicity | string | no | `OnCalendar=*-*-* 22:00:00` | The default periodicity of backups (every night at 10pm). Systemd timer format. |
+| postgresql_backup_mount_type | string | no | `local` | Type of storage that will hold the backup files. Supported types: local, nfs |
+| postgresql_backup_dir | string | no | `/tmp/postgresql_backup` | Path where the backups are sent. Is the mount point in case of network storage. |
+| postgresql_backup_remote_mount_path | string | no | `nfsserver:/path/to/mount` | The remote path of the mount command. Depends on the protocol. |
 | postgresql_backup_spec | list | yes | n.a. | The list of databases to backup. |
-| postgresql_backup_spec.postgresql_host | string | no | `postgresql_default_host` | Overrides the postgresql sever host value for this database. |
-| postgresql_backup_spec.postgresql_port | string | no | `postgresql_default_port` | Overrides the postgresql sever port value for this database. |
-| postgresql_backup_spec.postgresql_options | string | no | `postgresql_default_options` | Overrides the postgresql sever options value for this database. |
+| postgresql_backup_spec.postgresql_host | string | no | `postgresql_backup_default_host` | Overrides the postgresql sever host value for this database. |
+| postgresql_backup_spec.postgresql_port | string | no | `postgresql_backup_default_port` | Overrides the postgresql sever port value for this database. |
+| postgresql_backup_spec.postgresql_options | string | no | `postgresql_backup_default_options` | Overrides the postgresql sever options value for this database. |
 | postgresql_backup_spec.database_name | string | yes | n.a. | The name of the database to backup. |
 | postgresql_backup_spec.database_user | string | yes | n.a. | The username to use. |
 | postgresql_backup_spec.database_password | string | yes | n.a. | The password to use. |
-| postgresql_backup_spec.periodicity | string | no | `default_periodicity` | Overrides the default periodicity value for this database. |
-| postgresql_backup_spec.backup_retention | string | no | `default_backup_retention` | Overrides the default retention value for this database. |
+| postgresql_backup_spec.periodicity | string | no | `postgresql_backup_default_periodicity` | Overrides the default periodicity value for this database. |
+| postgresql_backup_spec.backup_retention | string | no | `postgresql_backup_default_retention` | Overrides the default retention value for this database. |
 
 # Example of inventory variables
 
