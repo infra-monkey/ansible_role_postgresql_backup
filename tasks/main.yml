@@ -5,7 +5,6 @@
 - name: Include webhook notification role
   ansible.builtin.include_role:
     name: infra_monkey.webhook_notify
-  when: freeipa_backup_webhook_notification
 
 - name: "Ensure nfs dependencies are installed"
   ansible.builtin.package:
