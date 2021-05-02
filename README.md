@@ -29,6 +29,13 @@ Tasks using passwords are not logged.
 | postgresql_backup_default_periodicity | string | no | `OnCalendar=*-*-* 22:00:00` | The default periodicity of backups (every night at 10pm). Systemd timer format. |
 | postgresql_backup_mount_type | string | no | `local` | Type of storage that will hold the backup files. Supported types: local, nfs |
 | postgresql_backup_dir | string | no | `/tmp/postgresql_backup` | Path where the backups are sent. Is the mount point in case of network storage. |
+| postgresql_backup_default_webhook_notification | boolean | no | `false` | Enables sending a webhook notification by default. |
+| postgresql_backup_default_webhook_url | string | no | `nil` | The url to send the webhook to by default. |
+| postgresql_backup_default_webhook_script | string | no | `/usr/local/bin/webhook-notify.sh` | Path to the default webhook notification script. |
+postgresql_backup_default_webhook_notification: false
+postgresql_backup_default_webhook_url: ""
+postgresql_backup_default_webhook_script: "/usr/local/bin/webhook-notify.sh"
+
 | postgresql_backup_remote_mount_path | string | no | `nfsserver:/path/to/mount` | The remote path of the mount command. Depends on the protocol. |
 | postgresql_backup_spec | list | yes | n.a. | The list of databases to backup. |
 | postgresql_backup_spec.postgresql_host | string | no | `postgresql_backup_default_host` | Overrides the postgresql sever host value for this database. |
@@ -39,6 +46,9 @@ Tasks using passwords are not logged.
 | postgresql_backup_spec.database_password | string | yes | n.a. | The password to use. |
 | postgresql_backup_spec.periodicity | string | no | `postgresql_backup_default_periodicity` | Overrides the default periodicity value for this database. |
 | postgresql_backup_spec.backup_retention | string | no | `postgresql_backup_default_retention` | Overrides the default retention value for this database. |
+| postgresql_backup_spec.webhook_notification | boolean | no | `postgresql_backup_default_webhook_notification` | Overrides the webhook notification value for this database. |
+| postgresql_backup_spec.webhook_script | string | yes | n.a. | Overrides the webhook script path for this database. |
+| postgresql_backup_spec.database_url | string | yes | n.a. | Overrides the url to send the webhook to for this database. |
 
 # Example of inventory variables
 
@@ -60,6 +70,9 @@ This role uses the collection based ansible modules which requires:
 This role depends on the ansible collections:
 - ansible.builtin
 - ansible.posix
+
+Default webhook script from ansible galaxy (you can use your own script):
+- infra_monkey.webhook_notify
 
 The role configures **systemd timers**, if your host doesn't use systemd, it will fail.
 
