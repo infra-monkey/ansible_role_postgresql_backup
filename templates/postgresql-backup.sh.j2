@@ -65,7 +65,7 @@ function create_backup_dir () {
 function copy_backup () {
     ERR_CODE=4
     create_backup_dir
-    NB_ARCHIVES=$(ls -l ${BACKUP_DIR}/${BACKUP_BASEDIR} | wc -l)
+    NB_ARCHIVES=$(ls -1 ${BACKUP_DIR}/${BACKUP_BASEDIR} | wc -l)
 #     mkdir -p ${BACKUP_TARGETDIR} || return ${ERR_CODE}
     echo  "copy dump at ${BACKUP_TARGETDIR}"
     cp -rf ${BACKUP_LOCALDIR}/* ${BACKUP_TARGETDIR} || return ${ERR_CODE}
