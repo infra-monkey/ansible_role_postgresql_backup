@@ -6,6 +6,7 @@
   ansible.builtin.apt:
     update_cache: yes
   when: ansible_os_family == "Debian"
+  changed_when: false
 
 - name: "Ensure nfs dependencies are installed"
   ansible.builtin.package:
