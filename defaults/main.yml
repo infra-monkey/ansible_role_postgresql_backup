@@ -11,4 +11,5 @@ postgresql_backup_default_periodicity: "OnCalendar=*-*-* 22:00:00"
 postgresql_backup_default_webhook_notification: false
 postgresql_backup_default_webhook_url: ""
 postgresql_backup_default_webhook_script: "/usr/local/bin/webhook-notify.sh"
+postgresql_backup_default_notify_failure_only: true
 ...
