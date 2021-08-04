@@ -28,6 +28,7 @@ echo "DATE=${DATE}"
 echo "BACKUP_BASEDIR=${BACKUP_BASEDIR}"
 echo "BACKUP_LOCALDIR=${BACKUP_LOCALDIR}"
 echo "BACKUP_TARGETDIR=${BACKUP_TARGETDIR}"
+echo "NOTIFY_FAILURE_ONLY=${NOTIFY_FAILURE_ONLY}"
 }
 
 function exit_script () {
@@ -47,7 +48,7 @@ function exit_script () {
             ;;
     esac
     echo ${EXIT_MSG}
-    [ "WEBHOOK_NOTIFY" == "True" ] && ${WEBHOOK_SCRIPT} ${WEBHOOK_URL} ":x: FAILED: ${0} on $(hostname -f) for ${DB_NAME} failed with error ${EXIT_CODE}\n${EXIT_MSG}"
+    [ "${WEBHOOK_NOTIFY}" == "True" ] && ${WEBHOOK_SCRIPT} ${WEBHOOK_URL} ":x: FAILED: ${0} on $(hostname -f) for ${DB_NAME} failed with error ${EXIT_CODE}\n${EXIT_MSG}"
     exit ${ERR_CODE}
 }
 
@@ -95,5 +96,5 @@ load_variables ${CONF_FILE}
 show_variables
 perform_backup || exit_script $?
 copy_backup ||  exit_script $?
-[ "${WEBHOOK_NOTIFY}" == "True" ] && ${WEBHOOK_SCRIPT} ${WEBHOOK_URL} ":white_check_mark: SUCCESS: ${0} on $(hostname -f) for ${DB_NAME} performed successfully"
+[ "${WEBHOOK_NOTIFY}" == "True" -a "${NOTIFY_FAILURE_ONLY}" == "False" ] && ${WEBHOOK_SCRIPT} ${WEBHOOK_URL} ":white_check_mark: SUCCESS: ${0} on $(hostname -f) for ${DB_NAME} performed successfully"
 exit 0

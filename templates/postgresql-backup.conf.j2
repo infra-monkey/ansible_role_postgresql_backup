@@ -8,3 +8,4 @@ OPTIONS="{{ postgresql_backup_spec.postgresql_options | default(postgresql_backu
 WEBHOOK_NOTIFY="{{ postgresql_backup_spec.webhook_notification | default(postgresql_backup_default_webhook_notification) }}"
 WEBHOOK_SCRIPT="{{ postgresql_backup_spec.webhook_script | default(postgresql_backup_default_webhook_script) }}"
 WEBHOOK_URL="{{ postgresql_backup_spec.webhook_url | default(postgresql_backup_default_webhook_url) }}"
+NOTIFY_FAILURE_ONLY="{{ postgresql_backup_spec.notify_failure_only | default(postgresql_backup_default_notify_failure_only) }}"

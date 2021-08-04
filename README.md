@@ -32,10 +32,7 @@ Tasks using passwords are not logged.
 | postgresql_backup_default_webhook_notification | boolean | no | `false` | Enables sending a webhook notification by default. |
 | postgresql_backup_default_webhook_url | string | no | `nil` | The url to send the webhook to by default. |
 | postgresql_backup_default_webhook_script | string | no | `/usr/local/bin/webhook-notify.sh` | Path to the default webhook notification script. |
-postgresql_backup_default_webhook_notification: false
-postgresql_backup_default_webhook_url: ""
-postgresql_backup_default_webhook_script: "/usr/local/bin/webhook-notify.sh"
-
+| postgresql_backup_default_notify_failure_only | boolean | no | `true` | Sending a notification only on failure. |
 | postgresql_backup_remote_mount_path | string | no | `nfsserver:/path/to/mount` | The remote path of the mount command. Depends on the protocol. |
 | postgresql_backup_spec | list | yes | n.a. | The list of databases to backup. |
 | postgresql_backup_spec.postgresql_host | string | no | `postgresql_backup_default_host` | Overrides the postgresql sever host value for this database. |
@@ -49,6 +46,7 @@ postgresql_backup_default_webhook_script: "/usr/local/bin/webhook-notify.sh"
 | postgresql_backup_spec.webhook_notification | boolean | no | `postgresql_backup_default_webhook_notification` | Overrides the webhook notification value for this database. |
 | postgresql_backup_spec.webhook_script | string | yes | n.a. | Overrides the webhook script path for this database. |
 | postgresql_backup_spec.database_url | string | yes | n.a. | Overrides the url to send the webhook to for this database. |
+| postgresql_backup_spec.notify_failure_only | boolean | no | `postgresql_backup_default_notify_failure_only` | Overrides the notify on failure only value for this database. |
 
 # Example of inventory variables
 
