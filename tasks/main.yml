@@ -50,7 +50,7 @@
         state: present
   when: ansible_os_family == "Debian"
 
-- name: "Install on Red Hat system" 
+- name: "Install on Red Hat system"
   block:
     - name: "Disable postgresql native dnf module on EL8"
       ansible.builtin.copy:
