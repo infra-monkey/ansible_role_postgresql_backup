@@ -4,7 +4,7 @@
 
 - name: "Update apt cache"
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
   when: ansible_os_family == "Debian"
   changed_when: false
 
@@ -29,7 +29,8 @@
     createhome: true
     state: present
 
-- block:
+- name: "Install on Debian system"
+  block:
     - name: Configure apt postgresql repository key
       ansible.builtin.apt_key:
         url: "{{ postgresql_apt_key_url }}"
@@ -49,7 +50,8 @@
         state: present
   when: ansible_os_family == "Debian"
 
-- block:
+- name: "Install on Red Hat system" 
+  block:
     - name: "Disable postgresql native dnf module on EL8"
       ansible.builtin.copy:
         src: postgresql.module
