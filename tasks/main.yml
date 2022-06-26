@@ -15,12 +15,12 @@
   when: deplist is defined
 
 - name: "Ensure pgbackup group exists"
-  group:
+  ansible.builtin.group:
     name: pgbackup
     state: present
 
 - name: "Ensure pgbackup user exists"
-  user:
+  ansible.builtin.user:
     name: "pgbackup"
     comment: "Postgresql Backup User"
     group: "pgbackup"
@@ -175,4 +175,3 @@
   no_log: true
   loop: "{{ postgresql_backup_spec }}"
   when: postgresql_backup_spec is defined
-...
