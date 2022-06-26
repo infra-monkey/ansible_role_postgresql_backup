@@ -2,9 +2,11 @@
 name: Molecule Test
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 defaults:
   run:
     working-directory: 'postgresql_backup'
@@ -15,8 +17,6 @@ jobs:
       max-parallel: 4
       matrix:
         python-version:
-          - 3.7
-          - 3.8
           - 3.9
         distro:
           - centos7
@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install ansible~=2.10 ansible-lint molecule[docker] docker
+          python3 -m pip install ansible ansible-lint molecule[docker] docker
       - name: Test with molecule
         env:
           PY_COLORS: '1'
