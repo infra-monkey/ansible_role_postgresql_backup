@@ -87,7 +87,7 @@
   ansible.builtin.package:
     name: "{{ nfs_deps }}"
     state: present
-  when: backup_mount_type == "nfs"
+  when: postgresql_backup_mount_type == "nfs"
 
 - name: "Ensure the backup mount is defined"
   ansible.posix.mount:
@@ -95,9 +95,9 @@
     path: "{{ postgresql_backup_dir }}"
     opts: rw,noatime
     state: mounted
-    fstype: "{{ backup_mount_type }}"
+    fstype: "{{ postgresql_backup_mount_type }}"
     boot: true
-  when: backup_mount_type == "nfs"
+  when: postgresql_backup_mount_type == "nfs"
 
 - name: "Ensure the target directory for host exists and is writable"
   ansible.builtin.file:
