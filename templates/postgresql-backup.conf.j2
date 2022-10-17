@@ -7,5 +7,6 @@ NB_BACKUPS="{{ item.backup_retention | default(postgresql_backup_default_retenti
 OPTIONS="{{ postgresql_backup_spec.postgresql_options | default(postgresql_backup_default_options) }}"
 WEBHOOK_NOTIFY="{{ postgresql_backup_spec.webhook_notification | default(postgresql_backup_default_webhook_notification) }}"
 WEBHOOK_SCRIPT="{{ postgresql_backup_spec.webhook_script | default(postgresql_backup_default_webhook_script) }}"
-WEBHOOK_URL="{{ postgresql_backup_spec.webhook_url | default(postgresql_backup_default_webhook_url) }}"
+WEBHOOK_HOSTNAME="{{ postgresql_backup_spec.webhook_hostname | default(postgresql_backup_default_webhook_hostname) }}"
+WEBHOOK_URI="{{ postgresql_backup_spec.webhook_uri | default(postgresql_backup_default_webhook_uri) }}"
 NOTIFY_FAILURE_ONLY="{{ postgresql_backup_spec.notify_failure_only | default(postgresql_backup_default_notify_failure_only) }}"
