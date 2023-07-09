@@ -3,16 +3,16 @@
   ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
 
 - name: "Update apt cache"
+  when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     update_cache: true
-  when: ansible_os_family == "Debian"
   changed_when: false
 
 - name: "Ensure nfs dependencies are installed"
+  when: deplist is defined
   ansible.builtin.package:
     name: "{{ deplist }}"
     state: present
-  when: deplist is defined
 
 - name: "Ensure pgbackup group exists"
   ansible.builtin.group:
@@ -30,6 +30,7 @@
     state: present
 
 - name: "Install on Debian system"
+  when: ansible_os_family == "Debian"
   block:
     - name: Configure apt postgresql repository key
       ansible.builtin.apt_key:
@@ -48,9 +49,9 @@
         update_cache: true
         autoremove: true
         state: present
-  when: ansible_os_family == "Debian"
 
 - name: "Install on Red Hat system"
+  when: ansible_os_family == "RedHat"
   block:
     - name: "Disable postgresql native dnf module on EL8"
       ansible.builtin.copy:
@@ -73,7 +74,6 @@
       ansible.builtin.package:
         name: "{{ pkglist }}"
         state: present
-  when: ansible_os_family == "RedHat"
 
 - name: "Ensure the target directory exists (can be used as mount point)"
   ansible.builtin.file:
@@ -84,12 +84,13 @@
     mode: '0755'
 
 - name: "Ensure nfs dependencies are installed"
+  when: postgresql_backup_mount_type == "nfs"
   ansible.builtin.package:
     name: "{{ nfs_deps }}"
     state: present
-  when: postgresql_backup_mount_type == "nfs"
 
 - name: "Ensure the backup mount is defined"
+  when: postgresql_backup_mount_type == "nfs"
   ansible.posix.mount:
     src: "{{ postgresql_backup_remote_mount_path }}"
     path: "{{ postgresql_backup_dir }}"
@@ -97,7 +98,6 @@
     state: mounted
     fstype: "{{ postgresql_backup_mount_type }}"
     boot: true
-  when: postgresql_backup_mount_type == "nfs"
 
 - name: "Ensure the target directory for host exists and is writable"
   ansible.builtin.file:
@@ -124,6 +124,7 @@
     mode: '0755'
 
 - name: "Ensure connection settings are defined"
+  when: postgresql_backup_spec is defined
   ansible.builtin.lineinfile:
     path: /home/pgbackup/.pgpass
     line: "{{ item.postgresql_host | default(postgresql_backup_default_host) }}:{{ item.postgresql_port | default(postgresql_backup_default_port) }}:{{ item.database_name }}:{{ item.database_user }}:{{ item.database_password }}"
@@ -133,9 +134,9 @@
     mode: '0600'
   no_log: true
   loop: "{{ postgresql_backup_spec }}"
-  when: postgresql_backup_spec is defined
 
 - name: "Define backup settings"
+  when: postgresql_backup_spec is defined
   ansible.builtin.template:
     src: postgresql-backup.conf.j2
     dest: "/etc/postgresql-backup/{{ item.database_name }}.conf"
@@ -144,9 +145,9 @@
     mode: '0644'
   no_log: true
   loop: "{{ postgresql_backup_spec }}"
-  when: postgresql_backup_spec is defined
 
 - name: "Create systemd service for the backup"
+  when: postgresql_backup_spec is defined
   ansible.builtin.template:
     src: postgresql-backup.service.j2
     dest: "/etc/systemd/system/postgresql-backup-{{ item.database_name }}.service"
@@ -155,9 +156,9 @@
     mode: '0644'
   no_log: true
   loop: "{{ postgresql_backup_spec }}"
-  when: postgresql_backup_spec is defined
 
 - name: "Create systemd timer for the backup"
+  when: postgresql_backup_spec is defined
   ansible.builtin.template:
     src: postgresql-backup.timer.j2
     dest: "/etc/systemd/system/postgresql-backup-{{ item.database_name }}.timer"
@@ -166,9 +167,9 @@
     mode: '0644'
   no_log: true
   loop: "{{ postgresql_backup_spec }}"
-  when: postgresql_backup_spec is defined
 
 - name: "Ensure systemd timers are enabled"
+  when: postgresql_backup_spec is defined
   ansible.builtin.systemd:
     name: postgresql-backup-{{ item.database_name }}.timer
     state: started
@@ -176,4 +177,3 @@
     daemon_reload: true
   no_log: true
   loop: "{{ postgresql_backup_spec }}"
-  when: postgresql_backup_spec is defined
